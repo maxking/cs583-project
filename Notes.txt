@@ -1,0 +1,9 @@
+Some existing Haskell IRC bots
+1. Daskeb - http://www.wastedartist.com/scripts/daskeb/daskeb.html
+2. Lambdabot- https://wiki.haskell.org/Lambdabot 
+
+Lambdabot looks interesting. Look at the list of features.  
+
+
+Haskell wiki has a tutorial to make an IRC Bot!
+https://wiki.haskell.org/Roll_your_own_IRC_bot
