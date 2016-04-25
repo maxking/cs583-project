@@ -9,11 +9,11 @@ onMessage s m
     | otherwise = putStrLn $ show m
     where chan = fromJust $ mChan m
           sender = fromJust $ mNick m
+          sender' = B.unpack $ fromJust $ mNick m
           msg = mMsg m
           toByteString = B.pack
-          sendToSender m = toByteString $ sender ++ ": " ++ m
+          sendToSender m = toByteString $ sender' ++ ": " ++ m
 
-                           
 
 execute :: B.ByteString -> String
 execute m = "Sorry, " ++ B.unpack m ++ "command not found!"
