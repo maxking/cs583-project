@@ -1,6 +1,7 @@
-import Network.SimpleIRC
+import Network.SimpleIRC hiding (Command)
 import Data.Maybe
 import qualified Data.ByteString.Char8 as B
+import BotCommand --TODO there is a command type in SimpleIRC. Check
 
 onMessage :: EventFunc
 onMessage s m
@@ -25,3 +26,12 @@ freenode = (mkDefaultConfig "irc.freenode.net" "hasbot")
            , cEvents = events
            }
 main = connect freenode False True
+
+
+process :: Command a -> String
+process (Cmd c f ss) = f (c ss)
+
+--may be we can define a tiny weeny parser (using the parser combinator) to parse the input text into ChatMsg type?
+parse :: String -> ChatMsg a
+parse = undefined 
+-- parse error for undefined command
