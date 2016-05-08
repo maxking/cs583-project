@@ -21,8 +21,8 @@ freenode = (mkDefaultConfig "irc.freenode.net" "hasbot")
 main = connect freenode False True
 
 
-process :: Command a -> String
-process (Cmd c f ss) = f (c ss)
+command :: Command a -> String
+command (Cmd c f ss) = f (c ss)
 
 -- may be we can define a tiny weeny parser (using the parser combinator) to
 -- parse the input text into ChatMsg type?
@@ -33,7 +33,7 @@ process (Cmd c f ss) = f (c ss)
 
 
 
--- | Define a test IRC message to the channel for testing
+-- | 1. Define a test IRC message to the channel for testing
 msg :: IrcMessage
 msg = IrcMessage {mNick = Just $ B.pack "maxking",
                   mUser = Just $ B.pack "~phoenix",
@@ -46,6 +46,7 @@ msg = IrcMessage {mNick = Just $ B.pack "maxking",
                   mOther = Nothing,
                   mRaw = B.pack ":maxking!~phoenix@104.131.128.74 PRIVMSG ##maxking :hi"}
 
+-- | 2. A test IRC message to channel highlighting the bot
 msg2 :: IrcMessage
 msg2 = IrcMessage {mNick = Just $ B.pack "maxking",
                    mUser = Just $ B.pack "~phoenix",
@@ -58,6 +59,7 @@ msg2 = IrcMessage {mNick = Just $ B.pack "maxking",
                    mOther = Nothing,
                    mRaw = B.pack ":maxking!~phoenix@104.131.128.74 PRIVMSG ##maxking :hasbot: How you you man?"}
 
+-- | 3. A test IRC message to bot as private message
 msg3 :: IrcMessage
 msg3 = IrcMessage {mNick = Just $ B.pack "maxking",
                    mUser = Just $ B.pack "~phoenix",
