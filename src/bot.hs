@@ -1,4 +1,5 @@
 --use -XBangPatterns while compiling
+--in case of linking error - http://stackoverflow.com/questions/21272056/resolving-ghc-i-found-a-duplicate-definition-for-symbol
 
 import Network.SimpleIRC hiding (Command,parse)
 import Data.Maybe
@@ -31,7 +32,7 @@ main = connect freenode False True
 command :: Command -> String
 command (Command f ss) = f ss
 
-commandParser :: String -> Either ParseError (ChatMsg a)
+commandParser :: String -> Either ParseError (ChatMsg)
 commandParser = parse parseCmd ""
 
 -- | Process a message and return a response
@@ -43,13 +44,15 @@ process m = case commandParser msg of
             where msg = B.unpack $ mMsg m
 
 
--- may be we can define a tiny weeny parser (using the parser combinator) to
--- parse the input text into ChatMsg type?            Done
--- parse also defined in simpleIRC                    This is to parse the input string that consists of all the connection details
--- parse :: String -> ChatMsg a                       Done in parser
--- parse = undefined
--- parse error for undefined command
-
+--Test function instead of passing the entire IRCMessage
+-- test "hi"
+-- test "!neg 3"
+-- test "!add 3 4"
+test :: String -> IO ()
+test msg = do case commandParser msg of
+                 Left error          -> putStrLn $ show error
+                 Right (Msg onlyMsg) -> putStrLn onlyMsg
+                 Right (Cmd (cmd))   -> putStrLn $ command cmd
 
 
 -- | 1. Define a test IRC message to the channel for testing

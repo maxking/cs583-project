@@ -11,18 +11,22 @@ import Text.ParserCombinators.Parsec.Error
 The input can either be a command or a normal message.
 If it is a command then it needs to be represented in a form where it is easier to add more operations without altering the processing-of-the-message part
 A command takes 2 functions. One to transform the input string into required types and other the actual function that performs the operation.
+Update: With the above approach, all the functions needed to be of same type ie., a had to be a common type. 
+This is cannot be true because some commands may take different types of arguments.
+Therefore, removed the intermediate type. 
 -}
 
 data Command = Command
  { execute   :: [String] -> String,
    args      :: [String]
  }
+
 type CommandName = String
 type CommandMap = CommandName -> Maybe ([String] -> Command)
 
 type Message = String
 
-data ChatMsg a = Msg String | Cmd Command
+data ChatMsg = Msg String | Cmd Command
 
 ------command getter and setter-------------------------------------------------------------
 
@@ -42,32 +46,33 @@ commands = set "add" add (set "neg" neg mempty)
 
 ------Parser--------------------------------------------------------------------------------
 
-parseCmd :: GenParser Char st (ChatMsg a)
+parseCmd :: GenParser Char st (ChatMsg)
 parseCmd = do
     doc <- chars
     eof
     return $ (doc) 
 -- parse error for undefined command
 
-chars :: GenParser Char st (ChatMsg a)
+chars :: GenParser Char st (ChatMsg)
 chars = do
-    try 
-     processCommand <|> message
+    try processCommand <|> message
 
-processCommand :: GenParser Char st (ChatMsg a)
+--TODO need a way to specify error due to incorrect number of arguments
+processCommand :: GenParser Char st (ChatMsg)
 processCommand = try $ do
-	       esclamation <- oneOf "-"
-	       command <- many alphaNum
-	       argString <- getInput
+	       char '!' 
+	       command <- many (noneOf " ")
+	       argString <- many anyChar
+	       --return (Cmd (neg []))
 	       case get command commands of
 	       	Nothing -> fail (command ++ " not found")
 	       	Just f  -> return $ Cmd (f (words argString))
 	       
 
-
-message :: GenParser Char st (ChatMsg a)
+--For now anything apart from commands is printed as it is.
+message :: GenParser Char st (ChatMsg)
 message = do
-	       msg <- getInput
+	       msg <- many anyChar
 	       return (Msg msg)
 
 
