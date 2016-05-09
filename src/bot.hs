@@ -7,7 +7,7 @@ import BotCommand --TODO there is a command type in SimpleIRC. Check
 --  message to a user, a channel and a user in the channel.
 --  type EventFunc = MIrc -> IrcMessage -> IO ()
 onMessage :: EventFunc
-onMessage s m = sendMsg s (mOrigin m) (process m)
+onMessage s m = sendMsg s (fromJust $ mOrigin m) (process m)
 
 -- | The list of event and their handlers. We only focus on responding to
 --  messages which generate the PrivMsg event.
@@ -22,6 +22,10 @@ freenode = (mkDefaultConfig "irc.freenode.net" "hasbot")
 -- connect :: MIrc -> Bool (threaded) -> Bool (Debug Mode) -> IO (Either IOError MIrc)
 main = connect freenode False True
 
+
+-- | Process a message and return a response
+process :: IrcMessage -> B.ByteString
+process = undefined
 
 -- | Process a command and return a response
 command :: Command a -> String

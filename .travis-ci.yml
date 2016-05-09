@@ -1,0 +1,7 @@
+language: haskell
+
+install:
+  - cabal install simpleirc
+
+script:
+  - cd src; ghc bot
