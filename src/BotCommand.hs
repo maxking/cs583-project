@@ -52,10 +52,10 @@ parseCmd = do
 chars :: GenParser Char st (ChatMsg a)
 chars = do
     try 
-     command <|> message
+     processCommand <|> message
 
-command :: GenParser Char st (ChatMsg a)
-command = try $ do
+processCommand :: GenParser Char st (ChatMsg a)
+processCommand = try $ do
 	       esclamation <- oneOf "-"
 	       command <- many alphaNum
 	       argString <- getInput
