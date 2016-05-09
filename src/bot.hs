@@ -5,22 +5,25 @@ import BotCommand --TODO there is a command type in SimpleIRC. Check
 
 -- | onMessage Event handler. According the RFC 2812 , PrivMsg is used to send
 --  message to a user, a channel and a user in the channel.
+--  type EventFunc = MIrc -> IrcMessage -> IO ()
 onMessage :: EventFunc
-onMessage s m = undefined
+onMessage s m = sendMsg s (mOrigin m) (process m)
 
-
-execute :: B.ByteString -> String
-execute m = "Sorry, " ++ B.unpack m ++ "command not found!"
-
+-- | The list of event and their handlers. We only focus on responding to
+--  messages which generate the PrivMsg event.
 events = [(Privmsg onMessage)]
 
+-- | The default configuration for the IRC server to join.
 freenode = (mkDefaultConfig "irc.freenode.net" "hasbot")
            {cChannels = ["##maxking"],
            cEvents = events}
 
+-- | The main event loop
+-- connect :: MIrc -> Bool (threaded) -> Bool (Debug Mode) -> IO (Either IOError MIrc)
 main = connect freenode False True
 
 
+-- | Process a command and return a response
 command :: Command a -> String
 command (Cmd c f ss) = f (c ss)
 
