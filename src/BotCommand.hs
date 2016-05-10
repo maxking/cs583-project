@@ -1,5 +1,6 @@
 module BotCommand where
 
+import Prelude hiding (mempty)
 import Data.ByteString
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
@@ -60,24 +61,22 @@ chars = do
 --TODO need a way to specify error due to incorrect number of arguments
 processCommand :: GenParser Char st (ChatMsg)
 processCommand = try $ do
-	       char '!' 
-	       command <- many (noneOf " ")
-	       argString <- many anyChar
-	       --return (Cmd (neg []))
-	       case get command commands of
-	       	Nothing -> fail (command ++ " not found")
-	       	Just f  -> return $ Cmd (f (words argString))
-	       
+               char '!' 
+               command <- many (noneOf " ")
+               argString <- many anyChar
+               case get command commands of
+                Nothing -> fail (command ++ " not found")
+                Just f  -> return $ Cmd (f (words argString))
 
 --For now anything apart from commands is printed as it is.
 message :: GenParser Char st (ChatMsg)
 message = do
-	       msg <- many anyChar
-	       return (Msg msg)
+           msg <- many anyChar
+           return (Msg msg)
 
 
 
-------------custome commands------------------------------------------------------------------------
+------------custome commands---------------------------------------------------
 
 
 neg :: [String] -> Command
