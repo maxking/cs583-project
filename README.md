@@ -4,13 +4,48 @@ CS583 Project
 This is the primary repository for our CS583 project.
 
 
-Dependencies:
+Dependencies
 ------------
 
 - [SimpleIRC][1] : A small IRC networking library in haskell. To install this run:
 ```bash
-cabal install simpleirc
+$ cabal install simpleirc
 ```
+
+How to Run
+----------
+
+To run this project, you can compile the program like this:
+
+```bash
+$ cd src
+$ ghc --make bot
+```
+
+Then you can run the program like:
+
+```bash
+$ ./bot
+```
+
+This will run the bot and connect it to IRC (Internet Relay Chat) network. To
+interact with the bot, open an irc client or a [web client][2] and join the
+channel `##maxking` and you will find the bot there with nick `hasbot`.
+
+For now, the bot just responds to simple IRC commands like
+```
+> !add 3 4
+7
+
+> !neg -9
+9
+```
+
+Anything else that you type is echo'd back from the bot.
+
+
+Internal Design
+---------------
 
 All messages are of type `IrcMessage` and have following important attributes:
 
@@ -37,3 +72,4 @@ In each of the three cases above we perform the following actions:
 - 3: Do the same processing as (2) but send the response as private message to sender
 
 [1]: https://hackage.haskell.org/package/simpleirc-0.3.1/docs/
+[2]: https://webchat.freenode.net/
