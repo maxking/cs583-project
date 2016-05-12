@@ -78,11 +78,15 @@ In each of the three cases above we perform the following actions:
 Design Questions
 ----------------
 
+- Currently the commands take list of strings as arguments. These arguments are then type casted to the type required by the actual function that executes the command. what is the best way to specify the number of arguments and type of the arguments so that it can be type checked?
+
 - What to do about the messages to the channel directly without highlight
   excecpt for logging?
 
 - How to make the design modular so that commands can be added over the chat
   interface itself.
+
+
 
 [1]: https://hackage.haskell.org/package/simpleirc-0.3.1/docs/
 [2]: https://webchat.freenode.net/
