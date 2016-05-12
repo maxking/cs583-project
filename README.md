@@ -3,6 +3,9 @@ CS583 Project
 
 Link to the projet: https://github.com/maxking/cs583-project
 
+Project Members:
+- Abhilash Raj
+- Deepthi S Kumar
 
 Dependencies
 ------------
