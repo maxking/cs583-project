@@ -72,7 +72,17 @@ In each of the three cases above we perform the following actions:
 - 1: Just log the message to a file
 - 2: Parse the command in the message and respond to the sender with a response
     on the channel that the command was recieved on
-- 3: Do the same processing as (2) but send the response as private message to sender
+- 3: Do the same processing as (2) but send the response as private message to
+  sender
+
+Design Questions
+----------------
+
+- What to do about the messages to the channel directly without highlight
+  excecpt for logging?
+
+- How to make the design modular so that commands can be added over the chat
+  interface itself.
 
 [1]: https://hackage.haskell.org/package/simpleirc-0.3.1/docs/
 [2]: https://webchat.freenode.net/
