@@ -1,7 +1,7 @@
 CS583 Project
 =============
 
-This is the primary repository for our CS583 project.
+Link to the projet: https://github.com/maxking/cs583-project
 
 
 Dependencies
