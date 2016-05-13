@@ -1,5 +1,3 @@
---use -XBangPatterns while compiling
---in case of linking error - http://stackoverflow.com/questions/21272056/resolving-ghc-i-found-a-duplicate-definition-for-symbol
 
 import Network.SimpleIRC hiding (Command,parse)
 import Data.Maybe
@@ -30,12 +28,15 @@ main = connect freenode False True
 
 -- | Process a command and return a response
 command :: Command -> String
-command (Command f ss) = f ss
+command (Command f ss u) = f ss
 
+-- | Parse the message which contains either a command starting with ! or anything 
 commandParser :: String -> Either ParseError (ChatMsg)
 commandParser = parse parseCmd ""
 
 -- | Process a message and return a response
+-- TODO wrap the result in IO and use try catch block here for run time exceptions.
+--
 process :: IrcMessage -> B.ByteString
 process m = case commandParser msg of
                  Left error          -> B.pack $ show error

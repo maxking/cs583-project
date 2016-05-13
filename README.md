@@ -4,7 +4,7 @@ CS583 Project
 This is an IRC bot that exposes haskell functions over a chat interface.
 More details can be found in Proposal.doc
 
-Link to the projet: https://github.com/maxking/cs583-project
+Link to the project: https://github.com/maxking/cs583-project
 
 Project Members:
 - Abhilash Raj

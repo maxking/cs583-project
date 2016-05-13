@@ -10,16 +10,19 @@ import Text.ParserCombinators.Parsec.Error
 
 {-
 The input can either be a command or a normal message.
-If it is a command then it needs to be represented in a form where it is easier to add more operations without altering the processing-of-the-message part
-A command takes 2 functions. One to transform the input string into required types and other the actual function that performs the operation.
+If it is a command then it needs to be represented in a form where it is easier 
+to add more operations without altering the processing-of-the-message part
+A command takes 2 functions. One to transform the input string into required types 
+and other the actual function that performs the operation.
 Update: With the above approach, all the functions needed to be of same type ie., a had to be a common type. 
 This is cannot be true because some commands may take different types of arguments.
 Therefore, removed the intermediate type. 
 -}
-
+--TODO add usage
 data Command = Command
  { execute   :: [String] -> String,
-   args      :: [String]
+   args      :: [String],
+   usage     :: String
  }
 
 type CommandName = String
@@ -27,6 +30,7 @@ type CommandMap = CommandName -> Maybe ([String] -> Command)
 
 type Message = String
 
+--add sequence operator ">>="
 data ChatMsg = Msg String | Cmd Command
 
 ------command getter and setter-------------------------------------------------------------
@@ -54,6 +58,7 @@ parseCmd = do
     return $ (doc) 
 -- parse error for undefined command
 
+--TODO parse "hasbot: !Cmd", "hasbot: message"
 chars :: GenParser Char st (ChatMsg)
 chars = do
     try processCommand <|> message
@@ -80,15 +85,15 @@ message = do
 
 
 neg :: [String] -> Command
-neg s = Command {execute = (\i -> show (-i)).convertToInt, args = s}
+neg s = Command {execute = (\i -> show (-i)).convertToInt, args = s, usage = "Usage: !neg <integer>"}
 
 add :: [String] -> Command
-add s = Command { execute = (\(i,j) -> show (i+j)).convertToIntInt, args = s}
+add s = Command { execute = (\(i,j) -> show (i+j)).convertToIntInt, args = s, usage = "Usage: !add <integer> <integer>"}
 
 
 convertToInt :: [String] -> Int
-convertToInt [x] = read x :: Int
-convertToInt _   = undefined --use the type cast monad??
+convertToInt []  = 1
+convertToInt (x:xs) = read x :: Int
 
 convertToIntInt :: [String] -> (Int,Int)
 convertToIntInt (x:y:[]) = let i = read x :: Int
