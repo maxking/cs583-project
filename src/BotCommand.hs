@@ -47,7 +47,7 @@ get x env = env x
 --Set Commands
 --TODO should we think of some otherway to map command name to command type??
 commands :: CommandMap
-commands = set "add" add (set "neg" neg mempty)
+commands = set "hi" hi (set "add" add (set "neg" neg mempty))
 
 ------Parser--------------------------------------------------------------------------------
 
@@ -83,6 +83,8 @@ message = do
 
 ------------custome commands---------------------------------------------------
 
+hi :: [String] -> Command
+hi s = Command {execute = (\_ -> "Hello!"), args = [], usage = "Usage: !hi"}
 
 neg :: [String] -> Command
 neg s = Command {execute = (\i -> show (-i)).convertToInt, args = s, usage = "Usage: !neg <integer>"}
