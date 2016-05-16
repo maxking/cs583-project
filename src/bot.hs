@@ -7,6 +7,7 @@ import Data.List
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 import BotCommand
+import Logger
 
 
 botName = "hasbot"
