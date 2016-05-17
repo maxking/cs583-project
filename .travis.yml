@@ -4,6 +4,10 @@ ghc: 7.8
 
 install:
   - cabal install simpleirc
+  - cabal install text
+  - cabal install parsec
+  - cabal install time
 
 script:
+  - cabal configure
   - cabal build
