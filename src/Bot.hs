@@ -1,3 +1,5 @@
+module Bot where
+
 import Network.SimpleIRC hiding (Command,parse)
 import Data.Maybe
 import qualified Data.ByteString.Char8 as B
@@ -22,20 +24,6 @@ onMessage s m = case categorize m of
                                                         (process True  $ mMsg m)
                   (PrivMsg, True)          -> sendMsg s (fromJust $ mOrigin m)
                                                         (process False $ mMsg m)
-
--- | The list of event and their handlers. We only focus on responding to
---  messages which generate the PrivMsg event.
-events = [(Privmsg onMessage)]
-
--- | The default configuration for the IRC server to join.
-freenode = (mkDefaultConfig "irc.freenode.net" Config.botName)
-
-           {cChannels = ["##maxking"],
-           cEvents = events}
-
--- | The main event loop
--- connect :: MIrc -> Bool (threaded) -> Bool (Debug Mode) -> IO (Either IOError MIrc)
-main = connect freenode False True
 
 -- | Process a command and return a response
 runCommand :: Command -> [String] -> String

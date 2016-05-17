@@ -7,6 +7,10 @@ install:
   - cabal install text
   - cabal install parsec
   - cabal install time
+  - cabal install warp
+  - cabal install blaze-builder
+  - cabal install http-types
+  - cabal install wai
 
 script:
   - cabal configure

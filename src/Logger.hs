@@ -38,3 +38,10 @@ defaultLogPath = do
 
 defaultLogger :: IrcMessage -> IO ()
 defaultLogger = writeLog defaultLogPath
+
+readLogs :: IO FilePath -> IO B.ByteString
+readLogs fpath = fpath >>= B.readFile
+
+defaultLogReader :: IO B.ByteString
+defaultLogReader = readLogs defaultLogPath
+
