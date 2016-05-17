@@ -35,6 +35,6 @@ defaultLogPath :: IO FilePath
 defaultLogPath = do
   homeDir <- getHomeDirectory
   return (homeDir ++ "/hasbot.txt")
-             
+
 defaultLogger :: IrcMessage -> IO ()
 defaultLogger = writeLog defaultLogPath

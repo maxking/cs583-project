@@ -8,22 +8,25 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 import BotCommand
 import Logger
+import Config
+import Categorize
 
-
-botName = "hasbot"
 
 -- | onMessage Event handler. According the RFC 2812 , PrivMsg is used to send
 --  message to a user, a channel and a user in the channel.
 --  type EventFunc = MIrc -> IrcMessage -> IO ()
 onMessage :: EventFunc
-onMessage s m = sendMsg s (fromJust $ mOrigin m) (process m)
+onMessage s m = case categorize m of
+                  ChanMsg      -> defaultLogger m
+                  ChanMsgtoBot -> sendMsg s (fromJust $ mOrigin m) (process m)
+                  PrivMsg      -> sendMsg s (fromJust $ mOrigin m) (process m)
 
 -- | The list of event and their handlers. We only focus on responding to
 --  messages which generate the PrivMsg event.
 events = [(Privmsg onMessage)]
 
 -- | The default configuration for the IRC server to join.
-freenode = (mkDefaultConfig "irc.freenode.net" botName)
+freenode = (mkDefaultConfig "irc.freenode.net" Config.Config.botName)
 
            {cChannels = ["##maxking"],
            cEvents = events}
@@ -51,7 +54,7 @@ process m = case commandParser (stripBotName msg) of
             where msg = B.unpack $ mMsg m
 
 stripBotName :: String -> String
-stripBotName s  = case stripPrefix (botName++":") (stripSpaces s) of
+stripBotName s  = case stripPrefix (Config.botName++":") (stripSpaces s) of
                    Just x  -> stripSpaces x
                    Nothing -> stripSpaces s
 
