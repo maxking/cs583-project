@@ -10,15 +10,14 @@ import Logger
 import Config
 import Categorize
 
-
 -- | onMessage Event handler. According the RFC 2812 , PrivMsg is used to send
 --  message to a user, a channel and a user in the channel.
 --  type EventFunc = MIrc -> IrcMessage -> IO ()
 onMessage :: EventFunc
-onMessage s m = case categorize m of
-                  ChanMsg      -> defaultLogger m
-                  ChanMsgtoBot -> sendMsg s (fromJust $ mOrigin m) (process m)
-                  PrivMsg      -> sendMsg s (fromJust $ mOrigin m) (process m)
+onMessage s m =   case categorize m of
+                    ChanMsg      -> defaultLogger m
+                    ChanMsgtoBot -> sendMsg s (fromJust $ mOrigin m) (process True  $ mMsg m)
+                    PrivMsg      -> sendMsg s (fromJust $ mOrigin m) (process False $ mMsg m)
 
 -- | The list of event and their handlers. We only focus on responding to
 --  messages which generate the PrivMsg event.
@@ -45,12 +44,15 @@ commandParser = parse parseCmd ""
 -- | Process a message and return a response
 -- TODO wrap the result in IO and use try catch block here for run time exceptions.
 --
-process :: IrcMessage -> B.ByteString
-process m = case commandParser (stripBotName msg) of
-                 Left error           -> B.pack $ show error
-                 Right (Msg onlyMsg)  -> B.pack onlyMsg
-                 Right (Cmd cmd args) -> B.pack $ runCommand cmd args
-            where msg = B.unpack $ mMsg m
+process :: Bool -> B.ByteString -> B.ByteString
+process True  = B.pack . process2 . stripBotName . B.unpack
+process False = B.pack . process2 . B.unpack
+
+process2 :: String -> String
+process2 m = case commandParser m of
+                 Left error           -> show error
+                 Right (Msg onlyMsg)  -> onlyMsg
+                 Right (Cmd cmd args) -> runCommand cmd args
 
 stripBotName :: String -> String
 stripBotName s  = case stripPrefix (Config.botName++":") (stripSpaces s) of
