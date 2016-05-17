@@ -1,5 +1,6 @@
-CS583 Project
+hasbot (CS583 Project)
 =============
+[![Build Status](https://travis-ci.org/maxking/cs583-project.svg?branch=master)](https://travis-ci.org/maxking/cs583-project)
 
 This is an IRC bot that exposes haskell functions over a chat interface.
 More details can be found in Proposal.doc
