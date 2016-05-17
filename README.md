@@ -13,25 +13,26 @@ Project Members:
 Dependencies
 ------------
 
-- [SimpleIRC][1] : A small IRC networking library in haskell. To install this run:
-```bash
-$ cabal install simpleirc
+- [SimpleIRC][1] : A small IRC networking library in haskell.
+- Parsec
+
 ```
 
 How to Run
 ----------
 
-To run this project, you can compile the program like this:
+To run this project, you can build this project by:
 
 ```bash
-$ cd src
-$ ghc --make bot
+$ git clone https://github.com/maxking/cs583-project
+$ cd cs583-project
+$ cabal build
 ```
 
 Then you can run the program like:
 
 ```bash
-$ ./bot
+$ ./dist/build/hasbot/hasbot
 ```
 
 This will run the bot and connect it to IRC (Internet Relay Chat) network. To
