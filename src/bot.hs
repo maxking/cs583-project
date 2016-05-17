@@ -1,4 +1,3 @@
-
 import Network.SimpleIRC hiding (Command,parse)
 import Data.Maybe
 import qualified Data.ByteString.Char8 as B
@@ -26,7 +25,7 @@ onMessage s m = case categorize m of
 events = [(Privmsg onMessage)]
 
 -- | The default configuration for the IRC server to join.
-freenode = (mkDefaultConfig "irc.freenode.net" Config.Config.botName)
+freenode = (mkDefaultConfig "irc.freenode.net" Config.botName)
 
            {cChannels = ["##maxking"],
            cEvents = events}
