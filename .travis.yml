@@ -11,10 +11,8 @@ matrix:
 before_install:
  - export PATH=/opt/ghc/$GHCVER/bin:/opt/cabal/$CABALVER/bin:$PATH
 
-env:
-  - CABALVER=1.22 GHCVER=7.10.1
-
 install:
+  - cabal update
   - cabal install simpleirc
   - cabal install text
   - cabal install parsec
