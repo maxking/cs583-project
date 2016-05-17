@@ -2,8 +2,7 @@ import Bot
 import Config
 import Network.SimpleIRC hiding (Command, parse)
 import Webserver
-import Control.Concurrent
-import Network.Wai.Handler.Warp    
+import Network.Wai.Handler.Warp
 
 -- | The list of event and their handlers. We only focus on responding to
 --  messages which generate the PrivMsg event.
