@@ -9,8 +9,6 @@ import Text.ParserCombinators.Parsec.Char
 import BotCommand
 
 
-botName = "hasbot"
-
 -- | onMessage Event handler. According the RFC 2812 , PrivMsg is used to send
 --  message to a user, a channel and a user in the channel.
 --  type EventFunc = MIrc -> IrcMessage -> IO ()
@@ -32,8 +30,8 @@ freenode = (mkDefaultConfig "irc.freenode.net" botName)
 main = connect freenode False True
 
 -- | Process a command and return a response
-command :: Command -> String
-command (Command f ss u) = f ss
+runCommand :: Command -> [String] -> String
+runCommand (Command f g u) = g.f 
 
 -- | Parse the message which contains either a command starting with ! or anything 
 commandParser :: String -> Either ParseError (ChatMsg)
@@ -44,9 +42,9 @@ commandParser = parse parseCmd ""
 --
 process :: IrcMessage -> B.ByteString
 process m = case commandParser (stripBotName msg) of
-                 Left error          -> B.pack $ show error
-                 Right (Msg onlyMsg) -> B.pack onlyMsg
-                 Right (Cmd (cmd))   -> B.pack $ command cmd
+                 Left error           -> B.pack $ show error
+                 Right (Msg onlyMsg)  -> B.pack onlyMsg
+                 Right (Cmd cmd args) -> B.pack $ runCommand cmd args
             where msg = B.unpack $ mMsg m
 
 stripBotName :: String -> String
@@ -62,10 +60,10 @@ stripSpaces  = T.unpack . T.strip . T.pack
 -- test "!neg 3"
 -- test "!add 3 4"
 test :: String -> IO ()
-test msg = do case commandParser (stripBotName $ msg) of
-                 Left error          -> putStrLn $ show error
-                 Right (Msg onlyMsg) -> putStrLn onlyMsg
-                 Right (Cmd (cmd))   -> putStrLn $ command cmd
+test msg = do case commandParser (msg) of
+                 Left error           -> putStrLn $ show error
+                 Right (Msg onlyMsg)  -> putStrLn onlyMsg
+                 Right (Cmd cmd args) -> putStrLn $ runCommand cmd args
 
 
 -- | 1. Define a test IRC message to the channel for testing
