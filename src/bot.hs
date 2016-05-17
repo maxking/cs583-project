@@ -14,10 +14,14 @@ import Categorize
 --  message to a user, a channel and a user in the channel.
 --  type EventFunc = MIrc -> IrcMessage -> IO ()
 onMessage :: EventFunc
-onMessage s m =   case categorize m of
-                    ChanMsg      -> defaultLogger m
-                    ChanMsgtoBot -> sendMsg s (fromJust $ mOrigin m) (process True  $ mMsg m)
-                    PrivMsg      -> sendMsg s (fromJust $ mOrigin m) (process False $ mMsg m)
+onMessage s m = case categorize m of
+                  ( _, False)              -> defaultLogger m
+                  (ChanMsg, True)          -> sendMsg s (fromJust $ mOrigin m)
+                                                        (process False $ mMsg m)
+                  (ChanMsgtoBot, True)     -> sendMsg s (fromJust $ mOrigin m)
+                                                        (process True  $ mMsg m)
+                  (PrivMsg, True)          -> sendMsg s (fromJust $ mOrigin m)
+                                                        (process False $ mMsg m)
 
 -- | The list of event and their handlers. We only focus on responding to
 --  messages which generate the PrivMsg event.
@@ -53,14 +57,6 @@ process2 m = case commandParser m of
                  Left error           -> show error
                  Right (Msg onlyMsg)  -> onlyMsg
                  Right (Cmd cmd args) -> runCommand cmd args
-
-stripBotName :: String -> String
-stripBotName s  = case stripPrefix (Config.botName++":") (stripSpaces s) of
-                   Just x  -> stripSpaces x
-                   Nothing -> stripSpaces s
-
-stripSpaces :: String -> String
-stripSpaces  = T.unpack . T.strip . T.pack
 
 --Test function instead of passing the entire IRCMessage
 -- test "hi"
