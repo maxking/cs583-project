@@ -16,8 +16,6 @@ Dependencies
 - [SimpleIRC][1] : A small IRC networking library in haskell.
 - Parsec
 
-```
-
 How to Run
 ----------
 
