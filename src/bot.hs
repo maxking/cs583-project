@@ -7,6 +7,7 @@ import Data.List
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 import BotCommand
+import Logger
 
 
 -- | onMessage Event handler. According the RFC 2812 , PrivMsg is used to send
