@@ -49,6 +49,28 @@ For now, the bot just responds to simple IRC commands like
 
 Anything else that you type is echo'd back from the bot.
 
+Features
+--------
+
+- hasbot connects to `Frenode` network by default and joins `##maxking` channel
+- It logs all the conversation on the channel internally
+- Logs are accesible through web at `http://localhost:3000`
+- The webserver and irc bot run in two seperate threads that are created using
+  [forkIO][3].
+- hasbot responds to the commands on the channel `##maxking` and also over
+  private message.
+
+
+TODO
+----
+
+- Add a	`help` command to help users with all the available commands.
+- Make it easy to add more commands (right now only !add and !neg
+  commands are available)
+- Allow searching through the history either as a command or over the web
+  interface
+- Proper error handling, in case of the arguments passed for a commands cause
+  the ccommand to error out.  
 
 Internal Design
 ---------------
@@ -81,7 +103,10 @@ In each of the three cases above we perform the following actions:
 Design Questions
 ----------------
 
-- Currently the commands take list of strings as arguments. These arguments are then type casted to the type required by the actual function that executes the command. what is the best way to specify the number of arguments and type of the arguments so that it can be type checked?
+- Currently the commands take list of strings as arguments. These arguments are
+  then type casted to the type required by the actual function that executes the
+  command. what is the best way to specify the number of arguments and type of
+  the arguments so that it can be type checked?
 
 - What to do about the messages to the channel directly without highlight
   excecpt for logging?
@@ -93,3 +118,4 @@ Design Questions
 
 [1]: https://hackage.haskell.org/package/simpleirc-0.3.1/docs/
 [2]: https://webchat.freenode.net/
+[3]: https://hackage.haskell.org/package/base-4.9.0.0/docs/Control-Concurrent.html#v:forkIO
