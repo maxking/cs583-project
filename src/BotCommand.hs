@@ -23,20 +23,16 @@ Therefore, removed the intermediate type.
 Update2: Added the intermediate type back. This is possible with a language extension called extensible types. 
 -}
 
-data Command = forall a. Command ([String] -> a) (a -> String) (String)
+data Command = forall a. Command ([String] -> a) (a -> String) String
 
 type CommandName = String
 type CommandMap = [(CommandName,Command)]
 
-type Message = String
 
 --add sequence operator ":>:"
 data ChatMsg = Msg String | Cmd Command [String]
 
 ------command getter and setter-------------------------------------------------------------
-
---mempty :: CommandMap
---mempty = \_ -> Nothing
 
 set :: CommandName -> Command -> CommandMap -> CommandMap
 set x i cs = (x,i) : cs
@@ -47,10 +43,6 @@ get x ((n,c):cs)
    |x == n       = Just c
    |otherwise    = get x cs
 
---List of all the custom commands
-commands :: CommandMap
-commands = ("hi", hi) : ("add", add) : ("neg", neg): []
-
 ------Parser--------------------------------------------------------------------------------
 
 parseCmd :: GenParser Char st (ChatMsg)
@@ -60,7 +52,6 @@ parseCmd = do
     return $ (doc) 
 -- parse error for undefined command
 
---TODO parse "hasbot: !Cmd", "hasbot: message"
 chars :: GenParser Char st (ChatMsg)
 chars = do 
     try processCommand <|> message
@@ -92,6 +83,11 @@ message = do
            msg <- many anyChar
            return (Msg msg)
 
+-----------------------------------------------------------------------------
+--List of all the custom commands
+
+commands :: CommandMap
+commands = ("hi", hi) : ("add", add) : ("neg", neg): []
 
 
 ------------custom commands---------------------------------------------------
