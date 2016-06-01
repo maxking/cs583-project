@@ -40,6 +40,9 @@ channel `##maxking` and you will find the bot there with nick `hasbot`.
 
 For now, the bot just responds to simple IRC commands like
 ```
+>!hi
+Hello!
+
 > !add 3 4
 7
 
@@ -86,7 +89,7 @@ All messages are of type `IrcMessage` and have following important attributes:
 - `mOrigin` : Sent by, if private message then sender else channel
 - `mRaw` : Raw message.
 
-When a message is recived, it can be of three types:
+When a message is received, it can be of three types:
 
 1. Sent to the channel
 2. Sent to the channel but starting with `hasbot:` to highlight
@@ -100,16 +103,31 @@ In each of the three cases above we perform the following actions:
 - 3: Do the same processing as (2) but send the response as private message to
   sender
 
+The raw message extracted from the IrcMessage is then parsed to get a value of 
+ChatMsg type. The parser is written using the parsec parser combinator library.
+
+A ChatMsg can be a command or some text. A command is prefixed by "!" symbol
+and followed by arguments
+New commands can be easily added without any changes required at the command
+processing level. This is facilitated by the higher order abstract syntax of the
+Command data type. The user who wants to add new commands can do so by defining 
+two functions, one to convert the arguments from String to the required types
+(*transform*) and the other which performs the operation (*execute*).
+
+The example commands hi, neg and add that takes zero, one and two arguments
+repectively can be used as reference to add new commands.
+
+The type of *transform* function is <code>[String] -> a </code> and that of 
+*execute* function is <code>a -> String</code>. The type parameter <code>a</code>
+here needs to same only for the command that is being defined and not all the
+commands. This is achieved by using [existential types][4].
+
+
 Design Questions
 ----------------
 
-- Currently the commands take list of strings as arguments. These arguments are
-  then type casted to the type required by the actual function that executes the
-  command. what is the best way to specify the number of arguments and type of
-  the arguments so that it can be type checked?
-
-- What to do about the messages to the channel directly without highlight
-  excecpt for logging?
+- Handling messages that are not commands. There is no framework for dealing with 
+  such messages. They are simply echo'd back to the channel.
 
 - How to make the design modular so that commands can be added over the chat
   interface itself.
@@ -118,4 +136,5 @@ Design Questions
 
 [1]: https://hackage.haskell.org/package/simpleirc-0.3.1/docs/
 [2]: https://webchat.freenode.net/
-[3]: https://hackage.haskell.org/package/base-4.9.0.0/docs/Control-Concurrent.html#v:forkIO
+[3]: https://hackage.haskell.org/package/base-4.9.0.0/docs/Control-Concurrent.html#v:forkIO 
+[4]: https://wiki.haskell.org/Existential_type
