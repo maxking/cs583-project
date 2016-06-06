@@ -7,10 +7,12 @@ import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 import Text.Parsec.Pos
 import Text.ParserCombinators.Parsec.Error
+import Control.Monad.Except
 
 botName = "hasbot"
 
 {-
+Hint
 The input can either be a command or a normal message.
 If it is a command then it needs to be represented in a form where it is easier 
 to add more operations without altering the processing-of-the-message part
@@ -22,8 +24,8 @@ This is cannot be true because some commands may take different types of argumen
 Therefore, removed the intermediate type.
 Update2: Added the intermediate type back. This is possible with a language extension called extensible types. 
 -}
-
-data Command = forall a. Command ([String] -> a) (a -> String) String
+type ErrMsg = String
+data Command = forall a. Command ([String] -> Either ArgError a) (a -> String) String
 
 type CommandName = String
 type CommandMap = [(CommandName,Command)]
@@ -31,6 +33,10 @@ type CommandMap = [(CommandName,Command)]
 
 --add sequence operator ":>:"
 data ChatMsg = Msg String | Cmd Command [String]
+
+
+-----Error types
+data ArgError = InvalidNumber | InvalidType
 
 ------command getter and setter-------------------------------------------------------------
 
@@ -83,6 +89,9 @@ message = do
            msg <- many anyChar
            return (Msg msg)
 
+-----Error messages
+showTypeError = "Invalid type of arguments.\n"
+showNumberError = "Invalid number of arguments.\n"
 -----------------------------------------------------------------------------
 --List of all the custom commands
 
@@ -93,7 +102,7 @@ commands = ("hi", hi) : ("add", add) : ("neg", neg): []
 ------------custom commands---------------------------------------------------
 
 hi :: Command
-hi = Command (\_ -> ()) (\_ -> "Hello!") "Usage: !hi"
+hi = Command (\_ -> Right ()) (\_ -> "Hello!") "Usage: !hi"
 
 neg :: Command
 neg = Command convertToInt (show.negate) "Usage: !neg <integer>"
@@ -102,12 +111,12 @@ add :: Command
 add = Command convertToIntInt (\(i,j) -> show (i+j)) "Usage: !add <integer> <integer>"
 
 
-convertToInt :: [String] -> Int
-convertToInt []  = 1
-convertToInt (x:xs) = read x :: Int
+convertToInt :: [String] -> Either ArgError Int
+convertToInt [x] = let i = read x :: Int in i `seq` return i
+convertToInt _   = throwError InvalidNumber
 
-convertToIntInt :: [String] -> (Int,Int)
-convertToIntInt (x:y:[]) = let i = read x :: Int
-                               j = read y :: Int
-                           in (i,j)
-convertToIntInt _        = undefined
+convertToIntInt :: [String] -> Either ArgError (Int,Int)
+convertToIntInt (x:y:[]) = let i = (read x :: Int) 
+                               j = (read y :: Int)
+                           in i `seq` j `seq` return (i,j)
+convertToIntInt _        = throwError InvalidNumber
