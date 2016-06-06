@@ -14,8 +14,9 @@ Project Members:
 Dependencies
 ------------
 
-- [SimpleIRC][1] : A small IRC networking library in haskell.
-- Parsec
+- [simpleirc][1] : A small IRC networking library in haskell.
+- [parsec][5]
+- [warp-3.2.6][6]
 
 How to Run
 ----------
@@ -138,3 +139,5 @@ Design Questions
 [2]: https://webchat.freenode.net/
 [3]: https://hackage.haskell.org/package/base-4.9.0.0/docs/Control-Concurrent.html#v:forkIO 
 [4]: https://wiki.haskell.org/Existential_type
+[5]: http://hackage.haskell.org/package/parsec
+[6]: https://hackage.haskell.org/package/warp-3.2.6/docs/

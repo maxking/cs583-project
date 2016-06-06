@@ -110,7 +110,12 @@ neg = Command convertToInt (show.negate) "Usage: !neg <integer>"
 add :: Command
 add = Command convertToIntInt (\(i,j) -> show (i+j)) "Usage: !add <integer> <integer>"
 
-
+{- The conversions need to be strict so that errors can be caught
+ to show proper messages.
+ The value of seq a b is bottom if a is bottom, and otherwise equal to b. 
+ seq is usually introduced to improve performance by avoiding unneeded laziness. 
+ Both its arguments are strict 
+-}
 convertToInt :: [String] -> Either ArgError Int
 convertToInt [x] = let i = read x :: Int in i `seq` return i
 convertToInt _   = throwError InvalidNumber
