@@ -26,24 +26,7 @@ onMessage s m = case categorize m of
 reply :: MIrc -> IrcMessage -> Bool -> IO ()
 reply s m b = (process b $ mMsg m) >>= sendMsg s (fromJust $ mOrigin m)
 
--- | Process a command and return a response
-runCommand :: Command -> [String] -> IO String
-runCommand (Command f g u) args = do
-  res <- evaluate (f args) `catch` excepHandler
-  case res of
-   Left InvalidNumber -> return (showNumberError ++ u)
-   Left InvalidType   -> return (showTypeError ++ u)
-   Right arg          -> return (g arg) 
-
-excepHandler :: SomeException -> IO (Either ArgError a)
-excepHandler _ = return (Left InvalidType) 
-
--- | Parse the message which contains either a command starting with ! or anything 
-commandParser :: String -> Either ParseError (ChatMsg)
-commandParser = parse parseCmd ""
-
 -- | Process a message and return a response
--- TODO wrap the result in IO and use try catch block here for run time exceptions.
 --
 process :: Bool -> B.ByteString -> IO B.ByteString
 process True  b = (process2 . stripBotName . B.unpack) b >>= return . B.pack
@@ -55,15 +38,38 @@ process2 m = case commandParser m of
                  Right (Msg onlyMsg)  -> return onlyMsg
                  Right (Cmd cmd args) -> runCommand cmd args
 
---Test function instead of passing the entire IRCMessage
--- test "hi"
--- test "!neg 3"
--- test "!add 3 4"
+-- | Parse the message which contains either a command starting with ! or anything
+commandParser :: String -> Either ParseError (ChatMsg)
+commandParser = parse parseCmd ""
+
+-- | Process a command and return a response
+runCommand :: Command -> [String] -> IO String
+runCommand (Command f g u) args = do
+  res <- evaluate (f args) `catch` excepHandler
+  case res of
+   Left InvalidNumber -> return (showNumberError ++ u)
+   Left InvalidType   -> return (showTypeError ++ u)
+   Right arg          -> return (g arg)
+
+excepHandler :: SomeException -> IO (Either ArgError a)
+excepHandler _ = return (Left InvalidType)
+
+-------------------------Tests--------------------------------------------------
+
+-- | Test function without the IRC communication
+-- >>>test "hi"
+-- hi
+-- >>>test "!hi"
+-- Hello!
+-- >>>test "!neg 3"
+-- -3
+-- >>>test "!add 3 4"
+-- 7
 test :: String -> IO ()
 test msg = do case commandParser (msg) of
                  Left error           -> putStrLn $ show error
                  Right (Msg onlyMsg)  -> putStrLn onlyMsg
-                 Right (Cmd cmd args) -> runCommand cmd args >>= putStrLn 
+                 Right (Cmd cmd args) -> runCommand cmd args >>= putStrLn
 
 
 -- | 1. Define a test IRC message to the channel for testing

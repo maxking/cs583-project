@@ -68,7 +68,8 @@ executable hasbot
                  text,
                  time,
                  wai,
-                 warp
+                 warp,
+                 mtl
 
 
   -- Directories containing source files.
