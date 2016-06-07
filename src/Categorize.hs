@@ -12,9 +12,9 @@ import qualified Data.ByteString.Char8 as B
 -- 1. Message to channel (chanMsg) - they are just logged to a file
 -- These can be identified by same mOrigin and mChan attributes
 --
--- 2. Message to channel but starting with the nick (chanMsgtoBot) - they are logged and also
---    processed to return the response to the user.
--- These can be idenfied as 1 with mMsg string with nick
+-- 2. Message to channel but starting with the nick (chanMsgtoBot) - they are
+--    logged and also processed to return the response to the user.  These can
+--    be idenfied as 1 with mMsg string with nick
 --
 -- 3. Private Message to the channel (privMsg)
 -- These can be identified with same mNick and mOrigin attributes

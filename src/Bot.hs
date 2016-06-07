@@ -18,10 +18,14 @@ import Control.Exception
 --  type EventFunc = MIrc -> IrcMessage -> IO ()
 onMessage :: EventFunc
 onMessage s m = case categorize m of
-                  ( _, False)              -> defaultLogger m
+                  (msgType, False)         -> logMsg msgType m
                   (ChanMsg, True)          -> reply s m False
                   (ChanMsgtoBot, True)     -> reply s m True
                   (PrivMsg, True)          -> reply s m False
+
+logMsg :: IrcMsgType -> IrcMessage -> IO ()
+logMsg PrivMsg m = return ()
+logMsg _ m       = defaultLogger m
 
 reply :: MIrc -> IrcMessage -> Bool -> IO ()
 reply s m b = (process b $ mMsg m) >>= sendMsg s (fromJust $ mOrigin m)
