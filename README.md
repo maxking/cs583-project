@@ -63,18 +63,19 @@ Features
   [forkIO][3].
 - hasbot responds to the commands on the channel `##maxking` and also over
   private message.
+- `!help` command presents a list of all the availabe commands along with usage
+  for each of the commands.
+- `!search` commands accepts one or more words to search in the history of the
+  channel. The searching algorithm itself is naive and slows down as the length
+  of the channel history increases.
 
 
 TODO
 ----
 
-- Add a	`help` command to help users with all the available commands.
 - Make it easy to add more commands (right now only !add and !neg
   commands are available)
-- Allow searching through the history either as a command or over the web
-  interface
-- Proper error handling, in case of the arguments passed for a commands cause
-  the ccommand to error out.  
+
 
 Internal Design
 ---------------
