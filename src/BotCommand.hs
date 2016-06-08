@@ -3,13 +3,12 @@ module BotCommand where
 
 import Prelude hiding (mempty)
 import Data.ByteString
+import Data.Char
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 import Text.Parsec.Pos
 import Text.ParserCombinators.Parsec.Error
 import Control.Monad.Except
-
-botName = "hasbot"
 
 {-
 A command takes 2 functions. One to transform the input string into required types
@@ -29,7 +28,7 @@ data ChatMsg = Msg String | Cmd Command [String]
 type CommandName = String
 type CommandMap = [(CommandName,Command)]
 
-------command getter and setter-------------------------------------------------------------
+------command getter and setter------------------------------------------------
 
 set :: CommandName -> Command -> CommandMap -> CommandMap
 set x i cs = (x,i) : cs
@@ -37,10 +36,10 @@ set x i cs = (x,i) : cs
 get :: CommandName -> CommandMap -> Maybe (Command)
 get x []         = Nothing
 get x ((n,c):cs)
-   |x == n       = Just c
+   |Prelude.map toLower x == n       = Just c
    |otherwise    = get x cs
 
-------Parser--------------------------------------------------------------------------------
+------Parser-------------------------------------------------------------------
 
 parseCmd :: GenParser Char st (ChatMsg)
 parseCmd = do

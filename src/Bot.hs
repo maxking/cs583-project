@@ -42,7 +42,8 @@ process2 m = case commandParser m of
                  Right (Msg onlyMsg)  -> return onlyMsg
                  Right (Cmd cmd args) -> runCommand cmd args
 
--- | Parse the message which contains either a command starting with ! or anything
+-- | Parse the message which contains either a command starting with ! or
+-- anything
 commandParser :: String -> Either ParseError (ChatMsg)
 commandParser = parse parseCmd ""
 
