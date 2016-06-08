@@ -1,8 +1,9 @@
 {-# LANGUAGE ExistentialQuantification #-}
 module BotCommand where
 
+import Logger
 import Prelude hiding (mempty)
-import Data.ByteString
+import Data.ByteString (pack, unpack)
 import Data.Char
 import qualified Data.List as L
 import Text.ParserCombinators.Parsec
@@ -10,7 +11,7 @@ import Text.ParserCombinators.Parsec.Char
 import Text.Parsec.Pos
 import Text.ParserCombinators.Parsec.Error
 import Control.Monad.Except
-
+import System.IO.Unsafe
 {-
 A command takes 2 functions. One to transform the input string into required types
 and other the function that performs the operation.
@@ -76,7 +77,7 @@ showNumberError = "Invalid number of arguments.\n"
 -------List of all the custom commands---------------------------------------
 
 commands :: CommandMap
-commands = ("hi", hi) : ("add", add) : ("neg", neg): ("help", help) : []
+commands = ("hi", hi) : ("add", add) : ("neg", neg): ("help", help) : ("search", search) : []
 
 
 ------------custom commands---------------------------------------------------
@@ -85,20 +86,41 @@ hi :: Command
 hi = Command (\_ -> Right ()) (\_ -> "Hello!") "Usage: !hi"
 
 neg :: Command
-neg = Command convertToInt (show.negate) "Usage: !neg <integer>"
+neg = Command convertToInt
+              (show.negate)
+              "Usage: !neg <integer>"
 
 add :: Command
-add = Command convertToIntInt (\(i,j) -> show (i+j)) "Usage: !add <integer> <integer>"
+add = Command convertToIntInt
+              (\(i,j) -> show (i+j))
+              "Usage: !add <integer> <integer>"
 
 help :: Command
-help = Command (\_ -> Right ()) (\_ -> getCommandList commands) "Usage: !help"
+help = Command (\_ -> Right ())
+               (\_ -> getCommandList commands)
+               "Usage: !help"
 
+search :: Command
+search = Command convertToWords search2 "Usage: !search words to search"
+
+search2 :: [String] -> String
+search2 = \wordList -> L.intercalate "\n---\n"
+          [unsafeDupablePerformIO $ findChat defaultLogPath word |  word <- wordList]
+
+findChat :: IO FilePath -> String -> IO String
+findChat path word = do
+  logFilePath <- path
+  contents    <- readFile logFilePath
+  return $ L.intercalate "\n" (filter (matchWords word) (lines contents))
+
+matchWords :: String -> String -> Bool
+matchWords word line = L.isInfixOf word line
 
 getCommandList :: CommandMap -> String
 getCommandList []                   = ""
 getCommandList ((name, command):xs) = L.intercalate "\n"
-                                 [L.intercalate " -> " [name ,cmdUsage(command)],
-                                 (getCommandList xs)]
+                               [L.intercalate " -> " [name ,cmdUsage(command)],
+                                (getCommandList xs)]
 
 {- The conversions need to be strict so that errors can be caught
  to show proper messages.
@@ -115,3 +137,7 @@ convertToIntInt (x:y:[]) = let i = (read x :: Int)
                                j = (read y :: Int)
                            in i `seq` j `seq` return (i,j)
 convertToIntInt _        = throwError InvalidNumber
+
+convertToWords :: [String] -> Either ArgError [String]
+convertToWords []  = throwError InvalidType
+convertToWords w = return w
