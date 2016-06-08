@@ -4,6 +4,7 @@ module BotCommand where
 import Prelude hiding (mempty)
 import Data.ByteString
 import Data.Char
+import qualified Data.List as L
 import Text.ParserCombinators.Parsec
 import Text.ParserCombinators.Parsec.Char
 import Text.Parsec.Pos
@@ -39,6 +40,9 @@ get x ((n,c):cs)
    |Prelude.map toLower x == n       = Just c
    |otherwise    = get x cs
 
+
+cmdUsage :: Command -> String
+cmdUsage (Command f g u) = u
 ------Parser-------------------------------------------------------------------
 
 parseCmd :: GenParser Char st (ChatMsg)
@@ -72,7 +76,7 @@ showNumberError = "Invalid number of arguments.\n"
 -------List of all the custom commands---------------------------------------
 
 commands :: CommandMap
-commands = ("hi", hi) : ("add", add) : ("neg", neg): []
+commands = ("hi", hi) : ("add", add) : ("neg", neg): ("help", help) : []
 
 
 ------------custom commands---------------------------------------------------
@@ -85,6 +89,16 @@ neg = Command convertToInt (show.negate) "Usage: !neg <integer>"
 
 add :: Command
 add = Command convertToIntInt (\(i,j) -> show (i+j)) "Usage: !add <integer> <integer>"
+
+help :: Command
+help = Command (\_ -> Right ()) (\_ -> getCommandList commands) "Usage: !help"
+
+
+getCommandList :: CommandMap -> String
+getCommandList []                   = ""
+getCommandList ((name, command):xs) = L.intercalate "\n"
+                                 [L.intercalate " -> " [name ,cmdUsage(command)],
+                                 (getCommandList xs)]
 
 {- The conversions need to be strict so that errors can be caught
  to show proper messages.
